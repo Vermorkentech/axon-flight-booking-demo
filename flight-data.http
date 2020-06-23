@@ -1,0 +1,75 @@
+POST http://localhost:8080/flights/123/book?name=Allard
+
+###
+
+POST http://localhost:8080/flights/123/book?name=Steven
+
+###
+
+POST http://localhost:8080/flights/123/book?name=Yvonne
+
+###
+
+POST http://localhost:8080/flights/123/book?name=Marc
+
+###
+
+POST http://localhost:8080/flights
+Content-Type: application/json
+
+{
+  "flightId":  "1234",
+  "origin": "MEX",
+  "destination": "AMS",
+  "numberOfSeats": 200
+}
+
+###
+
+POST http://localhost:8080/flights
+Content-Type: application/json
+
+{
+  "flightId":  "1235",
+  "origin": "AMS",
+  "destination": "MEX",
+  "numberOfSeats": 240
+}
+
+###
+
+POST http://localhost:8080/flights
+Content-Type: application/json
+
+{
+  "flightId":  "1236",
+  "origin": "MEX",
+  "destination": "GDL",
+  "numberOfSeats": 150
+}
+
+###
+
+POST http://localhost:8080/flights
+Content-Type: application/json
+
+{
+  "flightId":  "1237",
+  "origin": "OAX",
+  "destination": "LAP",
+  "numberOfSeats": 120
+}
+
+###
+
+POST http://localhost:8080/flights
+Content-Type: application/json
+
+{
+  "flightId":  "1238",
+  "origin": "QRO",
+  "destination": "TGZ",
+  "numberOfSeats": 800
+}
+
+###
