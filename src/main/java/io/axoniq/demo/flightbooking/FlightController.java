@@ -20,7 +20,9 @@ import io.axoniq.demo.flightbooking.coreapi.CancelBookingCommand;
 import io.axoniq.demo.flightbooking.coreapi.CreateFlightCommand;
 import io.axoniq.demo.flightbooking.coreapi.FindFlightByIdQuery;
 import io.axoniq.demo.flightbooking.coreapi.FindFlightsByRouteQuery;
-import io.axoniq.demo.flightbooking.query.FlightStatus;
+import io.axoniq.demo.flightbooking.coreapi.FindPassengerManifestQuery;
+import io.axoniq.demo.flightbooking.query.flightstatus.FlightStatus;
+import io.axoniq.demo.flightbooking.query.passengers.PassengerManifest;
 
 @RestController
 @RequestMapping("/flights")
@@ -69,6 +71,11 @@ public class FlightController {
     public CompletableFuture<List<FlightStatus>> findFlightsByRoute(@RequestParam("origin") String origin,
                                                                     @RequestParam("destination") String destination) {
         return queryGateway.query(new FindFlightsByRouteQuery(origin, destination), ResponseTypes.multipleInstancesOf(FlightStatus.class));
+    }
+
+    @GetMapping("/{flightId}/passengers")
+    public CompletableFuture<PassengerManifest> findPassengerManifest(@PathVariable String flightId) {
+        return queryGateway.query(new FindPassengerManifestQuery(flightId), PassengerManifest.class);
     }
 
 }

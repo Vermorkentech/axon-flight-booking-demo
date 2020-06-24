@@ -1,4 +1,4 @@
-package io.axoniq.demo.flightbooking.query;
+package io.axoniq.demo.flightbooking.query.flightstatus;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
