@@ -18,9 +18,7 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
-    implementation("org.axonframework:axon-spring-boot-starter:4.3.3") {
-        exclude(group = "org.axonframework", module = "axon-server-connector")
-    }
+    implementation("org.axonframework:axon-spring-boot-starter:4.3.3")
 }
 
 configure<JavaPluginConvention> {

@@ -5,13 +5,9 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import io.axoniq.demo.flightbooking.coreapi.BookFlightCommand;
@@ -21,17 +17,14 @@ import io.axoniq.demo.flightbooking.coreapi.CreateFlightCommand;
 import io.axoniq.demo.flightbooking.coreapi.FlightBookedEvent;
 import io.axoniq.demo.flightbooking.coreapi.FlightCreatedEvent;
 
-@Entity
 @Aggregate
 public class Flight {
 
-    @Id
+    @AggregateIdentifier
     private String flightId;
 
-    @Basic(fetch = FetchType.EAGER)
     private int numberOfSeats;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     private final List<String> bookings = new ArrayList<>();
 
     public Flight() {
@@ -39,8 +32,6 @@ public class Flight {
 
     @CommandHandler
     public Flight(CreateFlightCommand command) {
-        this.flightId = command.getFlightId();
-        this.numberOfSeats = command.getNumberOfSeats();
         apply(new FlightCreatedEvent(command.getFlightId(), command.getNumberOfSeats(), command.getOrigin(), command.getDestination()));
     }
 
@@ -49,7 +40,6 @@ public class Flight {
         if (bookings.size() >= numberOfSeats) {
             throw new IllegalArgumentException("Seat limit exceeded");
         }
-        bookings.add(command.getName());
         apply(new FlightBookedEvent(command.getFlightId(), command.getName()));
     }
 
@@ -58,8 +48,23 @@ public class Flight {
         if (!bookings.contains(command.getName())) {
             throw new IllegalArgumentException(("No booking found to cancel"));
         }
-        bookings.remove(command.getName());
         apply(new BookingCancelledEvent(command.getFlightId(), command.getName()));
+    }
+
+    @EventSourcingHandler
+    public void on(FlightCreatedEvent event) {
+        this.flightId = event.getFlightId();
+        this.numberOfSeats = event.getNumberOfSeats();
+    }
+
+    @EventSourcingHandler
+    public void on(FlightBookedEvent event) {
+        bookings.add(event.getName());
+    }
+
+    @EventSourcingHandler
+    public void on(BookingCancelledEvent event) {
+        bookings.remove(event.getName());
     }
 
 }
