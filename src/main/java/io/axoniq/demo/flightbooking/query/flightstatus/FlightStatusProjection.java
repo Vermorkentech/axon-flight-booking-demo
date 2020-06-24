@@ -5,6 +5,7 @@ import java.util.List;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import io.axoniq.demo.flightbooking.coreapi.BookingCancelledEvent;
@@ -14,6 +15,7 @@ import io.axoniq.demo.flightbooking.coreapi.FlightBookedEvent;
 import io.axoniq.demo.flightbooking.coreapi.FlightCreatedEvent;
 
 @Service
+@Profile("query-flight-status")
 public class FlightStatusProjection {
 
     private final FlightStatusRepository repository;

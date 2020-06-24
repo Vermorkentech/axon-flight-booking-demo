@@ -3,7 +3,10 @@ package io.axoniq.demo.flightbooking.query.flightstatus;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.springframework.context.annotation.Profile;
+
 @Entity
+@Profile("query-flight-status")
 public class FlightStatus {
 
     @Id
