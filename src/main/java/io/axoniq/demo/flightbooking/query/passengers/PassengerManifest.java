@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 
+import org.springframework.context.annotation.Profile;
+
 @Entity
+@Profile("query-passenger-manifest")
 public class PassengerManifest {
 
     @Id

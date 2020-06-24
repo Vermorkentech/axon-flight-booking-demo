@@ -2,6 +2,7 @@ package io.axoniq.demo.flightbooking.query.passengers;
 
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import io.axoniq.demo.flightbooking.coreapi.BookingCancelledEvent;
@@ -10,6 +11,7 @@ import io.axoniq.demo.flightbooking.coreapi.FlightBookedEvent;
 import io.axoniq.demo.flightbooking.coreapi.FlightCreatedEvent;
 
 @Component
+@Profile("query-passenger-manifest")
 public class PassengerManifestProjection {
 
     private final PassengerManifestRepository repository;
