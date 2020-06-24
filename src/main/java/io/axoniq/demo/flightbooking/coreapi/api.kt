@@ -12,3 +12,4 @@ data class BookingCancelledEvent(val flightId: String, val name: String)
 
 data class FindFlightByIdQuery(val flightId: String)
 data class FindFlightsByRouteQuery(val origin: String, val destination: String)
+data class FindPassengerManifestQuery(val flightId: String)
