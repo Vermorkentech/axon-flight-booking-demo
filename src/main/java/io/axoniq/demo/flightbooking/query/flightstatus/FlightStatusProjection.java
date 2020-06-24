@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.stereotype.Service;
 
 import io.axoniq.demo.flightbooking.coreapi.BookingCancelledEvent;
@@ -16,9 +17,11 @@ import io.axoniq.demo.flightbooking.coreapi.FlightCreatedEvent;
 public class FlightStatusProjection {
 
     private final FlightStatusRepository repository;
+    private final QueryUpdateEmitter updateEmitter;
 
-    public FlightStatusProjection(FlightStatusRepository repository) {
+    public FlightStatusProjection(FlightStatusRepository repository, QueryUpdateEmitter updateEmitter) {
         this.repository = repository;
+        this.updateEmitter = updateEmitter;
     }
 
     @EventHandler
@@ -28,20 +31,26 @@ public class FlightStatusProjection {
 
     @EventHandler
     public void on(FlightBookedEvent event) {
-        repository.findById(event.getFlightId())
-                  .map(flightStatus -> {
-                      flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() - 1);
-                      return flightStatus;
-                  });
+        FlightStatus newStatus = repository.findById(event.getFlightId())
+                                           .map(flightStatus -> {
+                                               flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() - 1);
+                                               return flightStatus;
+                                           }).get();
+        updateEmitter.emit(FindFlightByIdQuery.class,
+                           query -> query.getFlightId().equals(newStatus.getFlightId()),
+                           newStatus);
     }
 
     @EventHandler
     public void on(BookingCancelledEvent event) {
-        repository.findById(event.getFlightId())
-                  .map(flightStatus -> {
-                      flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() + 1);
-                      return flightStatus;
-                  });
+        FlightStatus newStatus = repository.findById(event.getFlightId())
+                                           .map(flightStatus -> {
+                                               flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() + 1);
+                                               return flightStatus;
+                                           }).get();
+        updateEmitter.emit(FindFlightByIdQuery.class,
+                           query -> query.getFlightId().equals(newStatus.getFlightId()),
+                           newStatus);
     }
 
     @QueryHandler(queryName = "findAllFlights")

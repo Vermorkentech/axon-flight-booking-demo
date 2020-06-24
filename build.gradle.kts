@@ -15,6 +15,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.3.1.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.3.1.RELEASE")
     implementation("com.h2database:h2:1.4.200")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 

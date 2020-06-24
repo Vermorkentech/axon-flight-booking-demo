@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
+import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import io.axoniq.demo.flightbooking.coreapi.FindFlightsByRouteQuery;
 import io.axoniq.demo.flightbooking.coreapi.FindPassengerManifestQuery;
 import io.axoniq.demo.flightbooking.query.flightstatus.FlightStatus;
 import io.axoniq.demo.flightbooking.query.passengers.PassengerManifest;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/flights")
@@ -76,6 +78,15 @@ public class FlightController {
     @GetMapping("/{flightId}/passengers")
     public CompletableFuture<PassengerManifest> findPassengerManifest(@PathVariable String flightId) {
         return queryGateway.query(new FindPassengerManifestQuery(flightId), PassengerManifest.class);
+    }
+
+    @GetMapping(value = "/{flightId}/watch", produces = "text/event-stream")
+    public Flux<FlightStatus> watchFlight(@PathVariable String flightId) {
+        SubscriptionQueryResult<FlightStatus, FlightStatus> subscriptionQueryResult =
+                queryGateway.subscriptionQuery(new FindFlightByIdQuery(flightId), FlightStatus.class, FlightStatus.class);
+        return subscriptionQueryResult
+                .initialResult()
+                .mergeWith(subscriptionQueryResult.updates());
     }
 
 }

@@ -36,3 +36,8 @@ GET http://localhost:8080/flights/123/passengers
 Accept: application/json
 
 ###
+
+GET http://localhost:8080/flights/123/watch
+Accept: text/event-stream
+
+###
