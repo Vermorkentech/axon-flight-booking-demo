@@ -1,13 +1,26 @@
 package io.axoniq.demo.flightbooking;
 
-import io.axoniq.demo.flightbooking.coreapi.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import io.axoniq.demo.flightbooking.coreapi.BookFlightCommand;
+import io.axoniq.demo.flightbooking.coreapi.CancelBookingCommand;
+import io.axoniq.demo.flightbooking.coreapi.CreateFlightCommand;
+import io.axoniq.demo.flightbooking.coreapi.FindFlightByIdQuery;
+import io.axoniq.demo.flightbooking.coreapi.FindFlightsByRouteQuery;
+import io.axoniq.demo.flightbooking.query.FlightStatus;
 
 @RestController
 @RequestMapping("/flights")
@@ -30,32 +43,32 @@ public class FlightController {
     public CompletableFuture<String> bookFlight(@PathVariable String flightId,
                                                 @RequestParam("name") String name) {
         return commandGateway.send(new BookFlightCommand(flightId, name))
-                .thenApply(o -> "Flight booked successfully")
-                .exceptionally(Throwable::getMessage);
+                             .thenApply(o -> "Flight booked successfully")
+                             .exceptionally(Throwable::getMessage);
     }
 
     @DeleteMapping("/{flightId}/cancel")
     public CompletableFuture<String> cancelBooking(@PathVariable String flightId,
                                                    @RequestParam("name") String name) {
         return commandGateway.send(new CancelBookingCommand(flightId, name))
-                .thenApply(o -> "Booking cancelled")
-                .exceptionally(Throwable::getMessage);
+                             .thenApply(o -> "Booking cancelled")
+                             .exceptionally(Throwable::getMessage);
     }
 
     @GetMapping
-    public CompletableFuture<List<Flight>> findAll() {
-        return queryGateway.query("findAllFlights", null, ResponseTypes.multipleInstancesOf(Flight.class));
+    public CompletableFuture<List<FlightStatus>> findAll() {
+        return queryGateway.query("findAllFlights", null, ResponseTypes.multipleInstancesOf(FlightStatus.class));
     }
 
     @GetMapping("/{flightId}")
-    public CompletableFuture<Flight> findById(@PathVariable String flightId) {
-        return queryGateway.query(new FindFlightByIdQuery(flightId), Flight.class);
+    public CompletableFuture<FlightStatus> findById(@PathVariable String flightId) {
+        return queryGateway.query(new FindFlightByIdQuery(flightId), FlightStatus.class);
     }
 
     @GetMapping("/getByRoute")
-    public CompletableFuture<List<Flight>> findFlightsByRoute(@RequestParam("origin") String origin,
-                                                              @RequestParam("destination") String destination) {
-        return queryGateway.query(new FindFlightsByRouteQuery(origin, destination), ResponseTypes.multipleInstancesOf(Flight.class));
+    public CompletableFuture<List<FlightStatus>> findFlightsByRoute(@RequestParam("origin") String origin,
+                                                                    @RequestParam("destination") String destination) {
+        return queryGateway.query(new FindFlightsByRouteQuery(origin, destination), ResponseTypes.multipleInstancesOf(FlightStatus.class));
     }
 
 }
