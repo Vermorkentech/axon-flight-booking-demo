@@ -30,7 +30,7 @@ public class FlightStatusProjection {
     public void on(FlightBookedEvent event) {
         repository.findById(event.getFlightId())
                   .map(flightStatus -> {
-                      flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() - 1);
+                      flightStatus.seatBooked();
                       return flightStatus;
                   });
     }
@@ -39,7 +39,7 @@ public class FlightStatusProjection {
     public void on(BookingCancelledEvent event) {
         repository.findById(event.getFlightId())
                   .map(flightStatus -> {
-                      flightStatus.setAvailableSeats(flightStatus.getAvailableSeats() + 1);
+                      flightStatus.bookingCancelled();
                       return flightStatus;
                   });
     }

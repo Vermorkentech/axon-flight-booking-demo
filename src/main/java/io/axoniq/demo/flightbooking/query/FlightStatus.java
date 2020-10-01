@@ -45,7 +45,11 @@ public class FlightStatus {
         return availableSeats;
     }
 
-    public void setAvailableSeats(int availableSeats) {
-        this.availableSeats = availableSeats;
+    public void seatBooked() {
+        this.availableSeats--;
+    }
+
+    public void bookingCancelled() {
+        this.availableSeats++;
     }
 }
